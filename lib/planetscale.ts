@@ -3,14 +3,14 @@ import { Generated, Kysely } from 'kysely';
 import { PlanetScaleDialect } from 'kysely-planetscale';
 
 interface User {
-  id: Generated<number>;
-  name: string;
-  username: string;
+  user_id: Generated<number>;
+  first_name: string;
+  last_name: string;
   email: string;
 }
 
 interface Database {
-  users: User;
+  User: User;
   // https://github.com/nextauthjs/next-auth/issues/4922
 }
 
