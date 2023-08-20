@@ -11,6 +11,8 @@
     "@headlessui/react": "^1.7.15",
     "@heroicons/react": "^2.0.18",
     "@planetscale/database": "^1.7.0",
+    "@prisma/client": "^5.1.1",
+    "@tanstack/react-query": "^4.33.0",
     "@tremor/react": "^3.2.6",
     "@types/js-cookie": "^3.0.3",
     "@types/node": "20.3.0",

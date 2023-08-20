@@ -1,0 +1,193 @@
+// This is your prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+
+// post_comment
+model PostComment {
+  comment_id        Int     @id @default(autoincrement())
+  text              String
+  comment_post_id   Int
+  comment_user_id   Int
+  createdAt         DateTime @default(now())
+  @@index([comment_post_id], name: "post_comment_comment_post_id_foreign")
+  @@index([comment_user_id], name: "post_comment_comment_user_id_foreign")
+}
+
+// post
+model Post {
+  post_id           Int     @id @default(autoincrement())
+  text              String
+  image             String  @default("no image")
+  category          String
+  likes             Int @default(0)
+  post_user_id      Int
+  createdAt         DateTime @default(now())
+  @@index([post_user_id], name: "post_post_user_id_foreign")
+}
+
+// post_category_type
+model PostCategoryType {
+  category_type_id  Int     @id @default(autoincrement())
+  title             String
+}
+
+// user_type
+model UserType {
+  user_type_id      Int     @id @default(autoincrement())
+  title             String
+}
+
+// like
+model Like {
+  like_id           Int     @id @default(autoincrement())
+  like_type         String  @default("like")
+  user_id           Int
+  post_id           Int
+  @@index([user_id], name: "like_user_id_foreign")
+  @@index([post_id], name: "like_post_id_foreign")
+}
+
+// lke_type
+model LikeType {
+  like_type_id      Int     @id @default(autoincrement())
+  title             String
+}
+
+// user_gender_type
+model UserGenderType {
+  gender_id         Int     @id @default(autoincrement())
+  title             String
+}
+
+// location
+model Location {
+  location_id       Int     @id @default(autoincrement())
+  title             String  @default("no title")
+  lat               String
+  lng               String
+  address           String
+  type              String
+  user_created_id   Int
+  location_photos   LocationPhoto[]
+  createdAt         DateTime @default(now())
+  @@index([user_created_id], name: "location_user_created_id_foreign")
+  @@index([type], name: "location_type_title_foreign")
+}
+
+// location_type
+model LocationType {
+  location_type_id  Int     @id @default(autoincrement())
+  title             String
+}
+
+// location_photo
+model LocationPhoto {
+  location_photo_id Int       @id @default(autoincrement())
+  location_id       Int
+  photo_url         String
+  location          Location  @relation(fields: [location_id], references: [location_id])
+  @@index([location_id], name: "location_photo_location_id_foreign")
+}
+
+// location_review
+model LocationReview {
+  review_id         Int     @id @default(autoincrement())
+  score       Int
+  review_location_id Int
+  review_user_id    Int     @default(1)
+  createdAt         DateTime @default(now())
+  @@index([review_location_id], name: "location_review_review_location_id_foreign")
+  @@index([review_user_id], name: "location_review_review_user_id_foreign")
+}
+
+// user
+model User {
+  user_id           Int     @id @default(autoincrement())
+  thumbnail         String @default("http://localhost:3000/icons/cat.png")
+  phone_number      String
+  first_name        String
+  last_name         String
+  username          String
+  email             String
+  password          String
+  marketing_accept  Boolean @default(false)
+  gender            String @default("not specified")
+  type              String @default("USER")
+  token             String @default("no token provided")
+  createdAt         DateTime @default(now())
+  @@index([gender], name: "user_gender_type_title_foreign")
+  @@index([type], name: "user_type_title_foreign")
+}
+
+// admin tokens 
+model AdminToken {
+  id                Int     @id @default(autoincrement())
+  token             String
+  user_id           Int
+  createdAt         DateTime @default(now())
+  @@index([user_id], name: "admin_token_user_id_foreign")
+  @@index([token], name: "admin_token_token_foreign")
+}
+
+// user_follow
+model Follow {
+  id                Int     @id @default(autoincrement())
+  followerId        Int
+  followedId        Int
+  @@index([followerId], name: "follow_user_id_foreign")
+  @@index([followedId], name: "follow_friend_id_foreign")
+}
+
+// user_story
+model Story {
+  story_id          Int     @id @default(autoincrement())
+  user_id           Int
+  image             String
+  views             Int @default(0)
+  likes             Int @default(0)
+  createdAt         DateTime @default(now())
+  @@index([user_id], name: "story_user_id_foreign")
+}
+
+model Message {
+  id                Int     @id @default(autoincrement())
+  sender_id         Int
+  receiver_id       Int
+  text              String
+  createdAt         DateTime @default(now())
+  @@index([sender_id], name: "message_sender_id_foreign")
+  @@index([receiver_id], name: "message_receiver_id_foreign")
+}
+
+model Message_like {
+  id                Int     @id @default(autoincrement())
+  message_id        Int
+  user_id           Int
+  @@index([message_id], name: "message_like_message_id_foreign")
+  @@index([user_id], name: "message_like_user_id_foreign")
+}
+
+model Notification {
+  id                Int     @id @default(autoincrement())
+  user_id           Int
+  text              String
+  type              String
+  createdAt         DateTime @default(now())
+  @@index([user_id], name: "notification_user_id_foreign")
+}
+
+model Notification_type {
+  id                Int     @id @default(autoincrement())
+  title             String
+  @@index([title], name: "notification_type_title_foreign")
+}
