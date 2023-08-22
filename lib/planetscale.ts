@@ -5,8 +5,12 @@ import { PlanetScaleDialect } from 'kysely-planetscale';
 interface User {
   user_id: Generated<number>;
   first_name: string;
+  username: string;
   last_name: string;
   email: string;
+  phone_number: number;
+  gender: string;
+  type: string;
 }
 
 interface Database {
