@@ -1,3 +1,6 @@
+// Este componente UsersTable es una tabla interactiva que muestra información de usuarios y permite
+// la edición y eliminación de usuarios.
+
 'use client'
 
 import React, { useState } from 'react';
@@ -13,6 +16,7 @@ import {
 } from '@tremor/react';
 import { makeRequest } from '../library/axios';
 
+// La interfaz User define la estructura de los datos de usuario.
 interface User {
   user_id: number;
   first_name: string;
@@ -24,48 +28,56 @@ interface User {
   type: string;
 }
 
+// Este componente funcional UsersTable acepta una lista de usuarios y muestra una tabla
+// con sus detalles. Permite la edición y eliminación de usuarios.
 export default function UsersTable({ users }: { users: User[] }) {
   const [editingUser, setEditingUser] = useState<number | null>(null);
   const [editedUserData, setEditedUserData] = useState<Partial<User>>({});
 
+  // Maneja la acción de editar un usuario, almacenando los datos editados en el estado.
   const handleEdit = (user: User) => {
     setEditingUser(user.user_id);
     setEditedUserData(user);
   };
 
+  // Maneja la acción de guardar los cambios editados de un usuario en el servidor.
   const handleSave = async (user: User) => {
-    const confirmEdit = window.confirm(`Do you want to edit this user ${user.first_name} ${user.last_name}?`);
+    const confirmEdit = window.confirm(`¿Deseas editar a ${user.first_name} ${user.last_name}?`);
     if (confirmEdit) {
       try {
         await makeRequest.put(`user/update/${user.user_id}`, editedUserData);
         setEditingUser(null);
         setEditedUserData({});
       } catch (error) {
-        window.confirm('Error editing user')
-        console.error('Error editing user:', error);
+        window.confirm('Error al editar el usuario');
+        console.error('Error al editar el usuario:', error);
       }
     }
   };
 
+  // Maneja la acción de cancelar la edición de un usuario.
   const handleCancelEdit = () => {
     setEditingUser(null);
     setEditedUserData({});
   };
 
+  // Maneja la acción de eliminar un usuario.
   const handleDelete = async (user: User) => {
-    const confirmDelete = window.confirm(`Do you want delete user ${user.first_name} ${user.last_name}?`);
+    const confirmDelete = window.confirm(`¿Deseas eliminar a ${user.first_name} ${user.last_name}?`);
     if (confirmDelete) {
       try {
-        await makeRequest.delete(`user/delete/${user.user_id}` )
+        await makeRequest.delete(`user/delete/${user.user_id}`);
       } catch (error) {
-        console.error('Error deleting user:', error);
+        console.error('Error al eliminar el usuario:', error);
       }
     }
   };
 
+  // La función renderiza la tabla y los controles de edición y eliminación.
   return (
     <Table>
       <TableHead>
+        {/* Encabezados de la tabla */}
         <TableRow>
           <TableHeaderCell>UserId</TableHeaderCell>
           <TableHeaderCell>Name</TableHeaderCell>
@@ -81,7 +93,9 @@ export default function UsersTable({ users }: { users: User[] }) {
       <TableBody>
         {users.map((user) => (
           <TableRow key={user.user_id}>
+            {/* Filas de la tabla con detalles de usuario */}
             <TableCell>{user.user_id}</TableCell>
+            {/* Celdas editables o de solo lectura */}
             <TableCell>
               {editingUser === user.user_id ? (
                 <input
@@ -131,7 +145,6 @@ export default function UsersTable({ users }: { users: User[] }) {
                 <Text>{user.username}</Text>
               )}
             </TableCell>
-            {/* Repeat the pattern for other fields */}
             <TableCell>
               {editingUser === user.user_id ? (
                 <input
@@ -205,6 +218,7 @@ export default function UsersTable({ users }: { users: User[] }) {
                 <Text>{user.gender}</Text>
               )}
             </TableCell>
+            {/* Controles para editar o eliminar */}
             <TableCell className="flex gap-2">
             {editingUser === user.user_id ? (
                 <>
